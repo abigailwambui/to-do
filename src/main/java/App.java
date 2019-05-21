@@ -9,6 +9,16 @@ public class App {
         staticFileLocation("/public");
         String layout = "templates/layout.vtl";
 
+        ProcessBuilder process = new ProcessBuilder();
+        Integer port;
+     if (process.environment().get("PORT") != null) {
+         port = Integer.parseInt(process.environment().get("PORT"));
+     } else {
+         port = 4567;
+     }
+
+    port(port);
+
         get("/", (request, response) -> {
             Map<String, Object> model = new HashMap<String, Object>();
             model.put("template", "templates/index.vtl");
@@ -84,15 +94,7 @@ public class App {
             return new ModelAndView(model, layout);
         }, new VelocityTemplateEngine());
 
-     ProcessBuilder process = new ProcessBuilder();
-     Integer port;
-     if (process.environment().get("PORT") != null) {
-         port = Integer.parseInt(process.environment().get("PORT"));
-     } else {
-         port = 4567;
-     }
-
-    setPort(port);
+     
     }
 
 }
