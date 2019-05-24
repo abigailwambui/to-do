@@ -1,14 +1,12 @@
-import org.sql2o.*;
+    import org.sql2o.*;
     import org.junit.*;
     import static org.junit.Assert.*;
     import java.util.Arrays;
 
 public class CategoryTest {
 
-    @Before
-    public void setUp() {
-        DB.sql2o = new Sql2o("jdbc:postgresql://localhost:5432/to_do_test", "abigail", "to_do");
-    }
+    @Rule 
+    public DatabaseRule database = new DatabaseRule();
 
     // @Test 
     // public void category_instantiatesCorrectly_true() {
@@ -107,14 +105,21 @@ public class CategoryTest {
         assertTrue(myCategory.getTasks().containsAll(Arrays.asList(tasks)));
     }
 
-    @After 
-    public void tearDown() {
-        try(Connection con = DB.sql2o.open()) {
-            String deleteTasksQuery = "DELETE FROM tasks*;";
-            String deleteCategoriesQuery = "DELETE FROM categories *;";
-            con.createQuery(deleteTasksQuery).executeUpdate();
-            con.createQuery(deleteCategoriesQuery).executeUpdate();
-        }
+    @Test 
+    public void delete_removesACategoryWithAllItsTasks(){
+        Category myCategory = new Category("Household chores");
+        myCategory.save();
+        Task firstTask = new Task("Mow the lawn",myCategory.getId());
+        firstTask.save();
+        Task secondTask = new Task("Do the dishes", myCategory.getId());
+        secondTask.save();
+        int myCategoryId = myCategory.getId();
+        int myTaskId = firstTask.getId();
+        int mySecondTaskId = secondTask.getId();
+        myCategory.deleteCategory();
+        assertEquals(null, Category.find(myCategoryId));
+        assertEquals(null, Task.find(myTaskId));
+        assertEquals(null, Task.find(mySecondTaskId));
     }
 
 }

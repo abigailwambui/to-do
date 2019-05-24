@@ -99,6 +99,15 @@ public class App {
             model.put("template", "templates/category.vtl");
             return new ModelAndView(model, layout);
         }, new VelocityTemplateEngine());
+
+        post("/categories/:id/delete", (request, response) -> {
+            Map<String, Object> model = new HashMap<String, Object>();
+            Category category = Category.find(Integer.parseInt(request.params(":id")));
+            category.deleteCategory();
+            model.put("categories", Category.all());
+            model.put("template", "templates/categories.vtl");
+            return new ModelAndView(model, layout);
+        }, new VelocityTemplateEngine());
     }
 
 }

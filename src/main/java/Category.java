@@ -61,6 +61,18 @@ public class Category {
                 .getKey();
         }
     }
+    public void deleteCategory(){
+        try(Connection con = DB.sql2o.open()) {
+            String sql = "DELETE FROM categories WHERE id=:id";
+                con.createQuery(sql)
+                .addParameter("id", id)
+                .executeUpdate();
+            String sql2 = "DELETE FROM tasks WHERE categoryId=:id";
+                con.createQuery(sql2)
+                .addParameter("id", id)
+                .executeUpdate();
+        }
+    }
     @Override
     public boolean equals(Object otherCategory) {
         if (!(otherCategory instanceof Category)) {
